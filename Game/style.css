@@ -1,0 +1,64 @@
+.game {
+    background: yellow;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    background-color: green;
+}
+
+.container {
+    display: grid;
+    width: 45vw;
+    height: 35vw;
+    margin: 0 auto;
+    padding: 1rem;
+    grid-gap: 1rem;
+    background-image: linear-gradient(darkblue, white, greenyellow);
+    grid-template-columns: .25fr .5fr .25fr;
+    grid-template-rows: .25fr .5fr .25fr;
+    grid-template-areas: "top-left top-left top-right"
+                        "game game game"
+                        "bottom-left bottom-middle bottom-right";
+   
+}
+
+#game-name {
+    grid-area: top-left;
+    background-color: black;
+}
+
+#score {
+    grid-area: top-right;
+    background-color: black ;
+}
+
+main {
+    grid-area: game;
+}
+
+#timer {
+    grid-area: bottom-left;
+    background-color: black;
+}
+
+#location {
+    grid-area: bottom-middle;
+}
+
+
+#enemy-count {
+    grid-area: bottom-right;
+    background-color: black;
+}
+
+#game-name, #score, #enemy-count, #timer, #location {
+    justify-content: center;
+    background-color: black;
+    display: flex;
+    align-items: center;
+    color: white;
+    height: 5vw;
+}
+
