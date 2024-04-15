@@ -65,6 +65,7 @@ class enemy {
 
 // ====================== Make Controls Here ===================
 function controls(x) {
+    
     console.log('movement :', x.key);
 
     if (x.key === 'ArrowLeft' || x.key === 'a') {
@@ -72,11 +73,16 @@ function controls(x) {
     } else if (x.key === 'ArrowRight' || x.key === 'd') {
         player.x += 5;
     } else if (x.key === 'q') {
-        shoot = new shot(player.x, player.y, testShot, 25, 50);
-        setInterval(function() {
+        shoot = new shot(player.x + 17, player.y - 15, testShot, 15, 15);
+        let interval = setInterval(() => {
             shoot.render();
             shoot.y -= 1;
         }, 1)
+
+        setTimeout(() => {
+            clearInterval(interval)
+        }, 1000);
+        
         // while (shoot.y >= game.height) {
         //     setInterval(function() {
         //         shoot.y += 10;
@@ -105,6 +111,7 @@ function makeEnemies() {
 }
 
 let shoot;
+let interval;
 
 class shot {
     constructor(x, y, image, width, height) {
