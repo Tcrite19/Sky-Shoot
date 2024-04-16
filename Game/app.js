@@ -9,6 +9,7 @@ const ctx = game.getContext('2d');
 const testImg = document.getElementById('testImg');
 const testImg2 = document.getElementById('testImg2');
 const testShot = document.getElementById('test-shot');
+const laserSound = document.getElementById('laser-sound');
 
 
 
@@ -73,6 +74,7 @@ function controls(x) {
     } else if (x.key === 'ArrowRight' || x.key === 'd') {
         player.x += 5;
     } else if (x.key === 'q') {
+        lsrSnd();
         shoot = new shot(player.x + 17, player.y - 15, testShot, 15, 15);
         let interval = setInterval(() => {
             shoot.render();
@@ -82,6 +84,7 @@ function controls(x) {
         setTimeout(() => {
             clearInterval(interval)
         }, 1000);
+        
         
         // while (shoot.y >= game.height) {
         //     setInterval(function() {
@@ -110,6 +113,7 @@ function makeEnemies() {
     }, 500);*/
 }
 
+// ====================== Make Laser here =====================
 let shoot;
 let interval;
 
@@ -128,6 +132,16 @@ class shot {
     }
 }
 
+// ====================== Make Sound Here ======================
+// class sound {
+//   constructor()
+// }  
+let lsrSnd = () => {
+    let lsrSnd = new Audio('./sound-effects/laserSound.wav');
+lsrSnd.playbackRate = 1;
+lsrSnd.volume = 1;
+lsrSnd.play();
+}
 // ====================== Make Game Process Here ===============
 function gameLoop() {
     ctx.clearRect(0, 0, game.width, game.height);
