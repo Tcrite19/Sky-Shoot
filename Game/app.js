@@ -1,7 +1,7 @@
 // ----- Galaga Type game -------
 // ====================== Grab Html elements Here ==============
 const movement = document.querySelector('#movement');
-const timer = document.querySelector('#time');
+const time = document.querySelector('#time');
 const score = document.querySelector('#points');
 const enemyCount= document.querySelector('#enemies');
 const game = document.querySelector('#game');
@@ -44,10 +44,7 @@ class Character {
 
 
 // ====================== Make Enemy Here ======================
-let enemies;
-let enemiesArr1 = [];
-let enemiesArr2 = [];
-let enemiesArr3 = [];
+let enemies; 
 class enemy {
     constructor(x, y, image, width, height) {
         this.x = x;
@@ -63,6 +60,24 @@ class enemy {
     }
 }
 
+// ====================== Make Enemy Move Here =================
+let enemyMovement = () => {
+    if (enemies.x <= game.width - enemies.width) {
+        enemies.x - 5 <= game.width - enemies.width ? (setInterval(() => {
+            enemies.x += 1;
+            enemies.render();
+            clearInterval();
+        }, 1000)) : null;
+    } else if (enemies.x >= 0) {
+        enemies.x + 5 >= 0 ? (setInterval(() => {
+            enemies.x -= 1;
+            enemies.render();
+        }, 1)) : null;
+        setTimeout(() => {
+            clearInterval()
+        }, 100)
+    }
+}
 
 // ====================== Make Controls Here ===================
 function controls(x) {
@@ -70,11 +85,34 @@ function controls(x) {
     console.log('movement :', x.key);
 
     if (x.key === 'ArrowLeft' || x.key === 'a') {
-        player.x -= 5;
+        player.x - 5 >= 0 ? (player.x -= 5) : null;
     } else if (x.key === 'ArrowRight' || x.key === 'd') {
-        player.x += 5;
+        player.x + 5 <= game.width - player.width ? (player.x += 5) : null;
     } else if (x.key === 'q') {
-        lsrSnd();
+        shooting();
+        
+    }
+}
+
+
+// ====================== Make Timer Here ======================
+let timeLeft = () => {
+}
+
+
+// ====================== Make Helper Functions Here ===========
+function makeEnemies() {
+    
+
+    /*setTimeout(function() {
+        let startingLocX = game.width + 40;
+        let startingLocY = game.width + 40;
+
+    }, 500);*/
+}
+
+let shooting = () => {
+    lsrSnd();
         shoot = new shot(player.x + 17, player.y - 15, testShot, 15, 15);
         let interval = setInterval(() => {
             shoot.render();
@@ -84,35 +122,7 @@ function controls(x) {
         setTimeout(() => {
             clearInterval(interval)
         }, 1000);
-        
-        
-        // while (shoot.y >= game.height) {
-        //     setInterval(function() {
-        //         shoot.y += 10;
-        //     }, 50);
-        // }
-    }
 }
-
-
-// ====================== Make Timer Here ======================
-
-
-
-// ====================== Make Helper Functions Here ===========
-function makeEnemies() {
-    let startingLocX = game.width + 40;
-    let startingLocY = game.width + 40;
-    for (let i = 0; i < 10; i++) {
-        
-    }
-    /*setTimeout(function() {
-        let startingLocX = game.width + 40;
-        let startingLocY = game.width + 40;
-
-    }, 500);*/
-}
-
 // ====================== Make Laser here =====================
 let shoot;
 let interval;
@@ -147,18 +157,32 @@ function gameLoop() {
     ctx.clearRect(0, 0, game.width, game.height);
     player.render();
     enemies.render();
-   // shoot.render();
-    setInterval
-    while (timer < 0) {
-        if (enemyCountNum < 0) {
+    
 
-        }
-    }
+    
+   // shoot.render();
+    //setInterval
+    enemyMovement();
+    timeLeft();
+    collision();
 }
 
 
 // ====================== Make Collision Here ==================
+    const collision = () => {
+        
+        let gotShot = (
+            shoot.x + shoot.width > enemies.x && // While shot is on the right side of enemy, points will be added
+            shoot.y < enemies.y + enemies.height &&  // While shot is above enemy, points will be added
+            shoot.x < enemies.x + enemies.width && // While shot is on the left side of enemy, points will be added
+            shoot.y + shoot.height > enemies.y // While shot is underneath enemy, points will be added
+            );
 
+        if (gotShot) {
+            let newScore = Number(score.textContent) + 10;
+            score.textContent = newScore;
+        }
+    }
 
 
 // ====================== Make Win\Lose Conditions here ========
