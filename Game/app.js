@@ -10,24 +10,57 @@ const testImg = document.getElementById('testImg');
 const testImg2 = document.getElementById('testImg2');
 const testShot = document.getElementById('test-shot');
 const laserSound = document.getElementById('laser-sound');
-
+const body = document.querySelector('body');
+const container = document.querySelector('.container');
+const main = document.querySelector('#main');
+const startbtn = document.getElementById('start-game');
 
 
 // ====================== Make Canvas Here =====================
+
 game.setAttribute('height', getComputedStyle(game)['height']);
 game.setAttribute('width', getComputedStyle(game)['width']);
 
-window.addEventListener('DOMContentLoaded', function() {
-    enemies = new enemy(50, 50, testImg2, 40, 40);
-    player = new Character(200, 225, testImg, 50, 50);
+
+window.addEventListener('DOMContentLoaded', () => {
+    enemies = new enemy(50, 50, testImg2, 30, 30);
+    player = new plane(200, 200, testImg, 40, 40);
     //shoot = new shot(player.x, player.y, testShot, 25, 50);
-    const runGame = setInterval(gameLoop, 100);
 });
 document.addEventListener('keydown', controls);
 
+const gameStart = () => {
+    const canvasElem = document.getElementById('game');
+
+    canvasElem.style.display = 'none';
+    
+    startbtn.addEventListener('click', () => {
+        startbtn.style.display = 'none';
+        canvasElem.style.display = 'block';
+        gameTest();
+    });
+
+}
+
+gameStart();
+
+function gameTest() {
+    const runGame = setInterval(gameLoop, 100);
+}
+
+
+// startbtn.addEventListener('click', (gameStarting) => {
+//     window.addEventListener('DOMContentLoaded', function() {
+//         enemies = new enemy(50, 50, testImg2, 40, 40);
+//         player = new plane(200, 500, testImg, 50, 50);
+//         //shoot = new shot(player.x, player.y, testShot, 25, 50);
+//         const runGame = setInterval(gameLoop, 100);
+//     });
+//     document.addEventListener('keydown', controls);
+// });
 // ====================== Make Player Here =====================
 let player;
-class Character {
+class plane {
     constructor(x, y, image, width, height) {
         this.x = x;
         this.y = y;
@@ -62,23 +95,16 @@ class enemy {
 
 // ====================== Make Enemy Move Here =================
 let enemyMovement = () => {
-    if (enemies.x <= game.width - enemies.width) {
-        enemies.x - 5 <= game.width - enemies.width ? (setInterval(() => {
-            enemies.x += 1;
-            enemies.render();
-            clearInterval();
-        }, 1000)) : null;
-    } else if (enemies.x >= 0) {
-        enemies.x + 5 >= 0 ? (setInterval(() => {
-            enemies.x -= 1;
-            enemies.render();
-        }, 1)) : null;
-        setTimeout(() => {
-            clearInterval()
-        }, 100)
-    }
+    
+   
 }
 
+let moveEnemyRight = () => {
+    enemies.x += 1;
+}
+let moveEnemyLeft = () => {
+    enemies.x += 1;
+}
 // ====================== Make Controls Here ===================
 function controls(x) {
     
@@ -97,23 +123,29 @@ function controls(x) {
 
 // ====================== Make Timer Here ======================
 let timeLeft = () => {
+    let timer = setInterval(() => {
+        time.textContent -= 1;
+    }, 1000);
+
 }
 
 
 // ====================== Make Helper Functions Here ===========
 function makeEnemies() {
-    
+    enemies.alive = false;
 
-    /*setTimeout(function() {
-        let startingLocX = game.width + 40;
-        let startingLocY = game.width + 40;
+    setTimeout(function() {
+        let randomX = Math.floor(Math.random() * (game.width - 50));
 
-    }, 500);*/
+        enemies = new enemy(randomX, 50, testImg2, 30, 30);
+    }, 1000)
+
+    return true;
 }
 
 let shooting = () => {
     lsrSnd();
-        shoot = new shot(player.x + 17, player.y - 15, testShot, 15, 15);
+        shoot = new shot(player.x + 13.5, player.y - 15, testShot, 15, 15);
         let interval = setInterval(() => {
             shoot.render();
             shoot.y -= 1;
@@ -121,7 +153,12 @@ let shooting = () => {
 
         setTimeout(() => {
             clearInterval(interval)
-        }, 1000);
+        }, 1100);
+}
+
+function animate() {
+    requestAnimationFrame(animate)
+    player.render();
 }
 // ====================== Make Laser here =====================
 let shoot;
@@ -142,6 +179,7 @@ class shot {
     }
 }
 
+
 // ====================== Make Sound Here ======================
 // class sound {
 //   constructor()
@@ -153,41 +191,67 @@ lsrSnd.volume = 1;
 lsrSnd.play();
 }
 // ====================== Make Game Process Here ===============
+let secondTracker = 0;
+
 function gameLoop() {
     ctx.clearRect(0, 0, game.width, game.height);
     player.render();
-    enemies.render();
     
+    
+    if(enemies.alive) {
+        enemies.render();
+        let hit = collision(shoot, enemies);
+    }
 
-    
-   // shoot.render();
-    //setInterval
     enemyMovement();
-    timeLeft();
-    collision();
+    //timeLeft();
+    
+    secondTracker += 100;
+    if (secondTracker % 1000 === 0) {
+        time.textContent -= 1;
+        secondTracker = 0;
+    }
+    endGame()
 }
 
 
 // ====================== Make Collision Here ==================
-    const collision = () => {
-        
+    const collision = (character, target) => {
+        if (!character || !target) return;
+
         let gotShot = (
-            shoot.x + shoot.width > enemies.x && // While shot is on the right side of enemy, points will be added
-            shoot.y < enemies.y + enemies.height &&  // While shot is above enemy, points will be added
-            shoot.x < enemies.x + enemies.width && // While shot is on the left side of enemy, points will be added
-            shoot.y + shoot.height > enemies.y // While shot is underneath enemy, points will be added
+            character.x + character.width > target.x && // While shot is on the right side of enemy, points will be added
+            character.y < target.y + target.height &&  // While shot is above enemy, points will be added
+            character.x < target.x + target.width && // While shot is on the left side of enemy, points will be added
+            character.y + character.height > target.y // While shot is underneath enemy, points will be added
             );
 
         if (gotShot) {
             let newScore = Number(score.textContent) + 10;
             score.textContent = newScore;
+            enemies.alive = false;
+            console.log(enemies.alive);
+            return makeEnemies();
+        } else {
+            return false;
         }
     }
 
 
 // ====================== Make Win\Lose Conditions here ========
+const endGame = () => {
+    const timeLeft = parseInt(time.textContent);
 
+    if (timeLeft <= 0) {
+        const canvasElem = document.getElementById('game');
+        const gameEndElem = document.getElementById('game-end');
 
+        canvasElem.style.display = 'none';
+        gameEndElem.style.display = 'block';
+    }
+}
+
+5
 
 // ====================== Make Power-Ups Here ==================
 
