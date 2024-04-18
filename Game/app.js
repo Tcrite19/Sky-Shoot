@@ -154,12 +154,24 @@ let shooting = () => {
         setTimeout(() => {
             clearInterval(interval)
         }, 1100);
+       
 }
 
-function animate() {
-    requestAnimationFrame(animate)
-    player.render();
-}
+// const explosionImg = new Image();
+// explosionImg.src = './images/explosion.jpg';
+// const spriteWidth = 200;
+// const spriteHeight = 200;
+// let frameX = 0;
+// let frameY = 0;
+
+// function animate() {
+//     ctx.drawImage(explosionImg, frameX * spriteWidth, frameY * spriteHeight, spriteWidth, spriteHeight, 0, 0, spriteWidth, spriteHeight);
+//     if (frameX < 7) frame++;
+//     else frameX = 0;
+//     requestAnimationFrame(animate)
+    
+// }
+
 // ====================== Make Laser here =====================
 let shoot;
 let interval;
@@ -190,6 +202,12 @@ lsrSnd.playbackRate = 1;
 lsrSnd.volume = 1;
 lsrSnd.play();
 }
+let explosionSnd = () => {
+    let explosion = new Audio ('./sound-effects/explosion.wav');
+    explosion.playbackRate = 1;
+    explosion.volume = 1;
+    explosion.play();
+}
 // ====================== Make Game Process Here ===============
 let secondTracker = 0;
 
@@ -206,10 +224,14 @@ function gameLoop() {
     enemyMovement();
     //timeLeft();
     
+    enemyCount.textContent = `You: ${player.x} \n Them: ${enemies.x}`;
+
     secondTracker += 100;
     if (secondTracker % 1000 === 0) {
         time.textContent -= 1;
         secondTracker = 0;
+    } else if (time.textContent == 0) {
+
     }
     endGame()
 }
@@ -227,6 +249,8 @@ function gameLoop() {
             );
 
         if (gotShot) {
+            // animate();
+            explosionSnd();
             let newScore = Number(score.textContent) + 10;
             score.textContent = newScore;
             enemies.alive = false;
@@ -248,6 +272,7 @@ const endGame = () => {
 
         canvasElem.style.display = 'none';
         gameEndElem.style.display = 'block';
+        movement.textContent = 'Good Try!!'
     }
 }
 

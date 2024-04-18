@@ -13,7 +13,7 @@ canvas {
 .container {
     display: grid;
     width: 45vw;
-    height: 35vw;
+    height: 39vw;
     margin: 0 auto;
     padding: 1rem;
     grid-gap: 1rem;
@@ -75,3 +75,9 @@ main button {
     justify-content: center;
 }
 
+#start-game {
+    margin-left: 320px;
+    height: 100px;
+    width: 200px;
+    font-size: 30px;
+}
